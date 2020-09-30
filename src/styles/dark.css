@@ -1,0 +1,30 @@
+#__next {
+	height: 100%;
+}
+.wrapper {
+	background-color: white;
+	height: 100%;
+	min-height: 0;
+}
+.dark {
+	color: white !important;
+	background-color: #1b1c1d;
+}
+
+.ui.modal.dark > .header,
+.ui.modal.dark > .content,
+.ui.modal.dark > .actions {
+	background-color: #1b1c1d;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.ui.modal.dark > .icon {
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.ui.checkbox.dark input.hidden + label,
+.dark > .ui.checkbox input.hidden + label,
+.dark > .ui.toggle.checkbox input:checked ~ label,
+.dark > .ui.toggle.checkbox input:focus:checked ~ label {
+	color: rgba(255, 255, 255, 0.9) !important;
+}
