@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import classnames from 'classnames'
-import { countNumberOnBoard } from '../sudoku/utils'
+import { countNumberOnBoard } from '../utils'
 import { useSelector } from 'react-redux'
 import { getBoard } from '../redux/selectors/board'
 
@@ -25,6 +25,7 @@ export const NumberButton: FC<Props> = ({ number, onClick }) => {
 					font-size: 24px;
 					line-height: 3rem;
 					text-align: center;
+					cursor: pointer;
 				}
 				.number-button:hover {
 					border-bottom: 2px solid;

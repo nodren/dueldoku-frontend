@@ -1,11 +1,17 @@
 import React, { FC, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Button, Form, Modal } from 'semantic-ui-react'
-
-import { useTheme } from '../hooks/useDarkMode'
+import { useActions } from '../hooks/redux'
+import { setDarkMode } from '../redux/actions/settings'
+import { getDarkMode } from '../redux/selectors/settings'
 
 export const Menu: FC = () => {
 	const [showSettings, setShowSettings] = useState(false)
-	const { dark, setDarkMode } = useTheme()
+	const dark = useSelector(getDarkMode)
+
+	const actions = useActions({
+		setDarkMode,
+	})
 
 	return (
 		<Modal
@@ -25,7 +31,7 @@ export const Menu: FC = () => {
 							label="Dark Mode"
 							toggle
 							checked={dark}
-							onChange={() => setDarkMode(!dark)}
+							onChange={() => actions.setDarkMode(!dark)}
 						/>
 					</Form.Field>
 				</Form>

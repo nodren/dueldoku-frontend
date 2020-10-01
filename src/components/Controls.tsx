@@ -19,9 +19,10 @@ interface Props {
 	onNumber: (number: number) => void
 	onHint: () => void
 	onErase: () => void
+	noScores?: boolean
 }
 
-export const Controls: FC<Props> = ({ onNumber, onHint, onErase }) => {
+export const Controls: FC<Props> = ({ onNumber, onHint, onErase, noScores }) => {
 	const notesMode = useSelector(getNotesMode)
 	const solution = useSelector(getSolution)
 	const board = useSelector(getBoard)
@@ -127,7 +128,7 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase }) => {
 				<NumberButton number={8} onClick={onNumberClick(8)} />
 				<NumberButton number={9} onClick={onNumberClick(9)} />
 			</Grid>
-			<Scores />
+			{!noScores && <Scores />}
 		</Grid>
 	)
 }

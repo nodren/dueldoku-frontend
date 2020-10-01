@@ -2,7 +2,6 @@ import classnames from 'classnames'
 import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
 import { useActions } from '../hooks/redux'
-import { useTheme } from '../hooks/useDarkMode'
 
 import { setActiveBox, setActiveNumber } from '../redux/actions/board'
 import {
@@ -13,10 +12,11 @@ import {
 	getNotes,
 	getSolution,
 } from '../redux/selectors/board'
+import { getDarkMode } from '../redux/selectors/settings'
 import { Grid } from './Grid'
 
 export const Board: FC = () => {
-	const { dark } = useTheme()
+	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 
 	return (
@@ -41,7 +41,7 @@ interface RowProps {
 }
 
 const Row: FC<RowProps> = ({ border, rowNum }) => {
-	const { dark } = useTheme()
+	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 
 	return (
@@ -66,7 +66,7 @@ interface BoxProps {
 }
 
 const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
-	const { dark } = useTheme()
+	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 	const activeBox = useSelector(getActiveBox)
 	const solution = useSelector(getSolution)

@@ -6,8 +6,10 @@ import { Answers, Board, Notes } from '../../types'
 export const fetchNewBoard = createAsyncThunk<[Board, Board], string>(
 	'fetchNewBoard',
 	async (mode) => {
-		const res = await axios.get<{ puzzle: Board; solution: Board }>(`/api/generate/${mode}`)
-		return [res.data.puzzle, res.data.solution]
+		const res = await axios.get<{ board: Board; solution: Board }>(
+			`${process.env.API_SERVER}/board/generate/${mode}`,
+		)
+		return [res.data.board, res.data.solution]
 	},
 )
 

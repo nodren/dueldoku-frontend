@@ -13,7 +13,7 @@ import { WaitingRoom } from './pages/WaitingRoom'
 import { PlaySingle } from './pages/PlaySingle'
 import { Theme } from './components/Theme'
 
-export const App: FC = () => {
+export const Routes: FC = () => {
 	return (
 		<Theme>
 			<Switch>
@@ -29,7 +29,7 @@ export const App: FC = () => {
 				<Route path="/join/:uuid" exact>
 					<Join />
 				</Route>
-				<Route path="/play/choose" exact>
+				<Route path="/play/single/choose" exact>
 					<SingleChoose />
 				</Route>
 				<Route path="/play/single/:mode" exact>

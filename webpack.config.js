@@ -16,7 +16,7 @@ module.exports = function (env, argv) {
 			pathinfo: true,
 		},
 		devServer: {
-			port: 8300,
+			port: 3000,
 			publicPath: '/',
 			historyApiFallback: true,
 			contentBase: path.resolve(__dirname + '/public'),

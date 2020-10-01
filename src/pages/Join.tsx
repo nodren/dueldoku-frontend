@@ -1,22 +1,21 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link, useParams } from 'react-router-dom'
 import { Button, Header, Loader } from 'semantic-ui-react'
 
-import { Board } from '../../components/Board'
-import { Grid } from '../../components/Grid'
-import { MultiplayerControls } from '../../components/MultiplayerControls'
-import { Scores } from '../../components/Scores'
-import { useActions } from '../../hooks/redux'
-import { useTheme } from '../../hooks/useDarkMode'
-import useSocket from '../../hooks/useSocket'
-import { setBoard, setSolution } from '../../redux/actions/board'
-import { setUuid } from '../../redux/actions/settings'
-import { getBoard, getGameOver } from '../../redux/selectors/board'
+import { Board } from '../components/Board'
+import { Grid } from '../components/Grid'
+import { MultiplayerControls } from '../components/MultiplayerControls'
+import { Scores } from '../components/Scores'
+import { useActions } from '../hooks/redux'
+import useSocket from '../hooks/useSocket'
+import { setBoard, setSolution } from '../redux/actions/board'
+import { setUuid } from '../redux/actions/settings'
+import { getBoard, getGameOver } from '../redux/selectors/board'
+import { getDarkMode } from '../redux/selectors/settings'
 
-export default function Home() {
-	const { dark } = useTheme()
+export const Join: FC = () => {
+	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 	const gameOver = useSelector(getGameOver)
 	const actions = useActions({
@@ -26,7 +25,7 @@ export default function Home() {
 	})
 	const [loading, setLoading] = useState(true)
 
-	const router = useRouter()
+	const params = useParams<{ uuid: string }>()
 
 	const socket = useSocket('ready', (data) => {
 		actions.setBoard(data.board)
@@ -36,13 +35,12 @@ export default function Home() {
 
 	useEffect(() => {
 		;(async () => {
-			if (router.query.uuid) {
-				actions.setUuid(router.query.uuid as string)
-				console.log('START', router.query.uuid)
-				socket.emit('start', router.query.uuid)
+			if (params.uuid) {
+				actions.setUuid(params.uuid)
+				socket.emit('start', params.uuid)
 			}
 		})()
-	}, [router.query.uuid])
+	}, [params.uuid])
 
 	return (
 		<>
@@ -77,11 +75,9 @@ export default function Home() {
 					<Grid rows="auto auto auto">
 						<div className="game-over">Game over!</div>
 						<Scores />
-						<Link href="/">
-							<a>
-								<Button primary>Play Again</Button>
-							</a>
-						</Link>
+						<Button as={Link} to="/" primary>
+							Play Again
+						</Button>
 					</Grid>
 				) : null}
 			</div>

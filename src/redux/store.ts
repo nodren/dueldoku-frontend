@@ -7,7 +7,7 @@ import { settingsReducer, SettingsState } from './reducers/settings'
 export interface RootState {
 	board: BoardState
 	multiplayer: MultiplayerState
-	setttings: SettingsState
+	settings: SettingsState
 }
 
 const reducer = combineReducers({
@@ -16,4 +16,8 @@ const reducer = combineReducers({
 	settings: settingsReducer,
 })
 
-export const store = configureStore({ reducer })
+export const getStore = () => {
+	return configureStore({
+		reducer,
+	})
+}

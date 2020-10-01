@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
 import { Label, Table } from 'semantic-ui-react'
-import { useTheme } from '../hooks/useDarkMode'
 
 import { getScores } from '../redux/selectors/multiplayer'
+import { getDarkMode } from '../redux/selectors/settings'
 import { getSocket } from '../socket'
 import { processScores } from '../utils'
 
@@ -11,7 +11,7 @@ const socket = getSocket()
 
 export const Scores: FC = () => {
 	const scores = useSelector(getScores)
-	const { dark } = useTheme()
+	const dark = useSelector(getDarkMode)
 
 	return (
 		<Table celled unstackable inverted={dark}>

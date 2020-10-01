@@ -1,42 +1,41 @@
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
 import { Button, Header, Loader, Popup } from 'semantic-ui-react'
 
-import { useActions } from '../../hooks/redux'
-import { useTheme } from '../../hooks/useDarkMode'
-import useSocket from '../../hooks/useSocket'
-import { setUuid } from '../../redux/actions/settings'
-import { getUuid } from '../../redux/selectors/settings'
+import { useActions } from '../hooks/redux'
+import useSocket from '../hooks/useSocket'
+import { fetchUuid, setUuid } from '../redux/actions/settings'
+import { getDarkMode, getUuid } from '../redux/selectors/settings'
 
-export default function Home() {
-	const { dark } = useTheme()
+export const WaitingRoom: FC = () => {
+	const dark = useSelector(getDarkMode)
 	const uuid = useSelector(getUuid)
 	const actions = useActions({
 		setUuid,
+		fetchUuid,
 	})
 	const [loading, setLoading] = useState(true)
 	const [showPopup, setShowPopup] = useState(false)
 
-	const router = useRouter()
+	const history = useHistory()
+	const params = useParams<{ mode: string }>()
 
 	const socket = useSocket('joined', (data) => {
-		router.push(`/play/${router.query.mode}/${uuid}`)
+		console.log('joined!', data)
+		history.push(`/play/${params.mode}/${uuid}`)
 	})
 
 	useEffect(() => {
-		;(async () => {
-			if (uuid) {
-				return
-			}
-			const id = await axios.get(`/api/uuid`)
-			actions.setUuid(id.data.id)
+		if (uuid) {
+			console.log('START', uuid)
+			socket.emit('start', uuid)
 			setLoading(false)
-			console.log('START', id.data.id)
-			socket.emit('start', id.data.id)
-		})()
+			return
+		}
+		actions.fetchUuid()
 	}, [uuid])
 
 	const onCopy = () => {

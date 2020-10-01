@@ -33,7 +33,6 @@ export const MultiplayerControls: FC = () => {
 	})
 
 	useSocket('update', ({ board, answers, scores }: UpdateProps) => {
-		console.log('update', scores, socket.id)
 		actions.setBoard(board)
 		actions.setScores(scores)
 		// refresh the board, react isn't handling a deep object update well
@@ -49,14 +48,14 @@ export const MultiplayerControls: FC = () => {
 	})
 
 	const onNumberClick = (number: number) => {
-		socket.emit('guess', uuid, { activeBox, number })
+		socket.emit('guess', { id: uuid, activeBox, number })
 	}
 
 	const onHintClick = () => {
-		socket.emit('hint', uuid, { activeBox })
+		socket.emit('hint', { id: uuid, activeBox })
 	}
 	const onEraseClick = () => {
-		socket.emit('erase', uuid, { activeBox })
+		socket.emit('erase', { id: uuid, activeBox })
 	}
 
 	return <Controls onNumber={onNumberClick} onHint={onHintClick} onErase={onEraseClick} />
