@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux'
 
 import { useActions } from '../hooks/redux'
 import useSocket from '../hooks/useSocket'
-import { setActiveBox, setAnswers, setBoard, setGameOver } from '../redux/actions/board'
+import { setActiveBox, setAnswers, setBoard, setGameOver, setNotes } from '../redux/actions/board'
 import { setScores } from '../redux/actions/multiplayer'
-import { getActiveBox } from '../redux/selectors/board'
+import { getActiveBox, getNotes, getSolution } from '../redux/selectors/board'
 import { getUuid } from '../redux/selectors/settings'
 import { getSocket } from '../socket'
 import { Board } from '../types'
-import { formatAnswers } from '../utils'
+import { checkAndClearNotes, formatAnswers } from '../utils'
 import { Controls } from './Controls'
 
 const socket = getSocket()
@@ -18,11 +18,15 @@ interface UpdateProps {
 	board: Board
 	answers?: Record<string, string>
 	scores: Record<string, number>
+	activeBox?: [number, number]
+	number?: number
 }
 
 export const MultiplayerControls: FC = () => {
 	const activeBox = useSelector(getActiveBox)
 	const uuid = useSelector(getUuid)
+	const solution = useSelector(getSolution)
+	const notes = useSelector(getNotes)
 
 	const actions = useActions({
 		setActiveBox,
@@ -30,15 +34,24 @@ export const MultiplayerControls: FC = () => {
 		setBoard,
 		setGameOver,
 		setScores,
+		setNotes,
 	})
 
-	useSocket('update', ({ board, answers, scores }: UpdateProps) => {
+	useSocket('update', ({ board, answers, scores, activeBox, number }: UpdateProps) => {
 		actions.setBoard(board)
-		actions.setScores(scores)
-		// refresh the board, react isn't handling a deep object update well
-		// const oldActive = [...activeBox]
-		// actions.setActiveBox([0, 0])
-		// actions.setActiveBox(oldActive as any)
+		if (scores) {
+			actions.setScores(scores)
+		}
+
+		if (activeBox && number) {
+			const boardSquare = board[activeBox[1]][activeBox[0]]
+			const solutionSquare = solution[activeBox[1]][activeBox[0]]
+			if (boardSquare === solutionSquare) {
+				// we had an update, and it's a correct guess, let's clear out some notes
+				const modifiedNotes = checkAndClearNotes(notes, activeBox[1], activeBox[0], number)
+				actions.setNotes(modifiedNotes)
+			}
+		}
 		if (answers) {
 			actions.setAnswers(formatAnswers(answers, socket.id))
 		}

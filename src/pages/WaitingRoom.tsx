@@ -1,4 +1,3 @@
-import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'

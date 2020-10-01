@@ -1,8 +1,8 @@
 import classnames from 'classnames'
 import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
-import { useActions } from '../hooks/redux'
 
+import { useActions } from '../hooks/redux'
 import { setActiveBox, setActiveNumber } from '../redux/actions/board'
 import {
 	getActiveBox,
@@ -12,7 +12,13 @@ import {
 	getNotes,
 	getSolution,
 } from '../redux/selectors/board'
-import { getDarkMode } from '../redux/selectors/settings'
+import {
+	getDarkMode,
+	getHighlightNumbers,
+	getHighlightRows,
+	getValidateAnswers,
+} from '../redux/selectors/settings'
+import { isError } from '../utils'
 import { Grid } from './Grid'
 
 export const Board: FC = () => {
@@ -72,6 +78,9 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 	const solution = useSelector(getSolution)
 	const activeNumber = useSelector(getActiveNumber)
 	const answers = useSelector(getAnswers)
+	const hilightRows = useSelector(getHighlightRows)
+	const hilightNumbers = useSelector(getHighlightNumbers)
+	const validateAnswers = useSelector(getValidateAnswers)
 
 	const actions = useActions({
 		setActiveBox,
@@ -79,16 +88,16 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 	})
 
 	const square = board[rowNum][columnNum]
-	const solutionSquare = solution[rowNum][columnNum]
 
 	const classNames = classnames({
-		active: activeBox[0] === columnNum && activeBox[1] === rowNum,
+		error: isError(rowNum, columnNum, board, solution, validateAnswers),
+		active: activeBox?.[0] === columnNum && activeBox?.[1] === rowNum,
 		['semi-active']:
-			(activeBox[0] === columnNum && activeBox[1] !== rowNum) ||
-			(activeBox[0] !== columnNum && activeBox[1] === rowNum),
+			hilightRows &&
+			((activeBox?.[0] === columnNum && activeBox?.[1] !== rowNum) ||
+				(activeBox?.[0] !== columnNum && activeBox?.[1] === rowNum)),
 		border: columnNum !== 0 && columnNum % 3 === 0,
-		['active-number']: square !== 0 && square === activeNumber,
-		error: square !== 0 && square !== solutionSquare,
+		['active-number']: hilightNumbers && square !== 0 && square === activeNumber,
 		['your-guess']: answers[`${columnNum}:${rowNum}`] === 'you',
 		['opponent-guess']: answers[`${columnNum}:${rowNum}`] === 'opponent',
 		box: true,
@@ -110,19 +119,28 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 					border-left: 2px solid ${dark ? '#aaa' : '#333'};
 				}
 				.active {
-					color: white !important;
+					color: white;
 					background-color: ${dark ? 'dodgerblue' : 'lightblue'} !important;
 				}
+				.active.your-guess {
+					color: blue !important;
+				}
+				.active.opponent-guess {
+					color: darkorange !important;
+				}
+				.active.error {
+					color: ${dark ? 'darkred' : 'red'} !important;
+				}
 				.semi-active {
-					background-color: ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+					background-color: ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'};
 				}
 				.active-number {
-					background-color: ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+					background-color: ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'};
 					font-weight: bolder;
 					font-size: 16px;
 				}
 				.your-guess {
-					color: ${dark ? 'dodgerblue' : 'deepskyblue'};
+					color: ${dark ? 'dodgerblue' : 'blue'};
 				}
 				.opponent-guess {
 					color: orange;

@@ -1,22 +1,13 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Header } from 'semantic-ui-react'
 
-import { useActions } from '../hooks/redux'
-import { checkDarkMode } from '../redux/actions/settings'
 import { getDarkMode } from '../redux/selectors/settings'
 import { Grid } from './Grid'
 import { Menu } from './Menu'
 
 export const Theme: FC = ({ children }) => {
 	const dark = useSelector(getDarkMode)
-	const actions = useActions({
-		checkDarkMode,
-	})
-
-	useEffect(() => {
-		actions.checkDarkMode()
-	}, [])
 
 	const fullScreen = () => {
 		// full screen attempt

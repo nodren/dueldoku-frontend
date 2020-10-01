@@ -14,7 +14,7 @@ import {
 } from '../actions/board'
 
 export interface BoardState {
-	activeBox: [number, number]
+	activeBox?: [number, number]
 	activeNumber: number
 	answers: Answers
 	board?: Board
@@ -25,7 +25,6 @@ export interface BoardState {
 }
 
 const initialState: BoardState = {
-	activeBox: [0, 0],
 	activeNumber: 0,
 	answers: {},
 	board: undefined,

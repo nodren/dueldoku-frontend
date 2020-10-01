@@ -1,13 +1,14 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { Button, Grid, Loader } from 'semantic-ui-react'
+import { Button, Loader } from 'semantic-ui-react'
+import { useClickAway } from 'react-use'
 
 import { Board } from '../components/Board'
-import { Scores } from '../components/Scores'
+import { Grid } from '../components/Grid'
 import { SingleplayerControls } from '../components/SingleplayerControls'
 import { useActions } from '../hooks/redux'
-import { fetchNewBoard } from '../redux/actions/board'
+import { fetchNewBoard, setActiveBox, setActiveNumber } from '../redux/actions/board'
 import { getBoard, getGameOver, getSolution } from '../redux/selectors/board'
 
 export const PlaySingle: FC = () => {
@@ -18,6 +19,8 @@ export const PlaySingle: FC = () => {
 
 	const actions = useActions({
 		fetchNewBoard,
+		setActiveBox,
+		setActiveNumber,
 	})
 
 	const params = useParams<{ mode: string }>()
@@ -31,6 +34,12 @@ export const PlaySingle: FC = () => {
 		}
 	}, [solution])
 
+	const ref = useRef(null)
+	useClickAway(ref, () => {
+		actions.setActiveBox()
+		actions.setActiveNumber(0)
+	})
+
 	return (
 		<>
 			<style jsx>{`
@@ -43,15 +52,14 @@ export const PlaySingle: FC = () => {
 			`}</style>
 			<Loader active={loading} />
 			{!loading && board && !gameOver ? (
-				<>
+				<div ref={ref}>
 					<Board />
 					<SingleplayerControls />
-				</>
+				</div>
 			) : null}
 			{gameOver ? (
 				<Grid rows="auto auto auto">
-					<div className="game-over">Game over!</div>
-					<Scores />
+					<div className="game-over">You win over!</div>
 					<Button as={Link} to="/" primary>
 						Play Again
 					</Button>

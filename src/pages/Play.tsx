@@ -1,14 +1,21 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Button, Loader } from 'semantic-ui-react'
+import { useClickAway } from 'react-use'
 
 import { Board } from '../components/Board'
 import { Grid } from '../components/Grid'
 import { MultiplayerControls } from '../components/MultiplayerControls'
 import { Scores } from '../components/Scores'
 import { useActions } from '../hooks/redux'
-import { fetchNewBoard, setBoard, setSolution } from '../redux/actions/board'
+import {
+	fetchNewBoard,
+	setActiveBox,
+	setActiveNumber,
+	setBoard,
+	setSolution,
+} from '../redux/actions/board'
 import { setUuid } from '../redux/actions/settings'
 import { getBoard, getGameOver, getSolution } from '../redux/selectors/board'
 import { getSocket } from '../socket'
@@ -24,6 +31,8 @@ export const Play: FC = () => {
 		setSolution,
 		setUuid,
 		fetchNewBoard,
+		setActiveBox,
+		setActiveNumber,
 	})
 	const [loading, setLoading] = useState(true)
 
@@ -47,6 +56,12 @@ export const Play: FC = () => {
 		}
 	}, [solution])
 
+	const ref = useRef(null)
+	useClickAway(ref, () => {
+		actions.setActiveBox()
+		actions.setActiveNumber(0)
+	})
+
 	return (
 		<>
 			<style jsx>{`
@@ -59,10 +74,10 @@ export const Play: FC = () => {
 			`}</style>
 			<Loader active={loading} />
 			{!loading && board && !gameOver ? (
-				<>
+				<div ref={ref}>
 					<Board />
 					<MultiplayerControls />
-				</>
+				</div>
 			) : null}
 			{gameOver ? (
 				<Grid rows="auto auto auto">

@@ -13,7 +13,7 @@ export const fetchNewBoard = createAsyncThunk<[Board, Board], string>(
 	},
 )
 
-export const setActiveBox = createAction<[number, number]>('setActiveBox')
+export const setActiveBox = createAction<[number, number] | undefined>('setActiveBox')
 export const setActiveNumber = createAction<number>('setActiveNumber')
 export const setAnswers = createAction<Answers>('setAnswers')
 export const setBoard = createAction<Board>('updateBoard')

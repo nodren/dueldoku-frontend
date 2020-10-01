@@ -2,6 +2,7 @@ require('dotenv').config()
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = function (env, argv) {
 	return {
@@ -52,6 +53,13 @@ module.exports = function (env, argv) {
 			new HtmlWebpackPlugin({
 				template: 'web/index.html',
 				filename: 'index.html',
+			}),
+			new CopyWebpackPlugin({
+				patterns: [
+					{ from: './web/images', toType: 'dir', to: './images/' },
+					'./web/favicon.svg',
+					'./web/manifest.json',
+				],
 			}),
 		],
 		module: {
