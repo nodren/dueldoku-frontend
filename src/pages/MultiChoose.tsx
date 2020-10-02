@@ -23,9 +23,6 @@ export const MultiChoose: FC = () => {
 				<Button as={Link} to="/wait/hard">
 					Hard
 				</Button>
-				<Button as={Link} to="/wait/expert">
-					Expert
-				</Button>
 			</Button.Group>
 		</>
 	)

@@ -23,9 +23,6 @@ export const SingleChoose: FC = () => {
 				<Button as={Link} to="/play/single/hard">
 					Hard
 				</Button>
-				<Button as={Link} to="/play/single/expert">
-					Expert
-				</Button>
 			</Button.Group>
 		</>
 	)
