@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link, useParams } from 'react-router-dom'
-import { Button, Loader } from 'semantic-ui-react'
+import { useParams } from 'react-router-dom'
+import { Loader } from 'semantic-ui-react'
 
 import { Board } from '../components/Board'
-import { Grid } from '../components/Grid'
+import { GameOver } from '../components/GameOver'
 import { SingleplayerControls } from '../components/SingleplayerControls'
 import { useActions } from '../hooks/redux'
 import { fetchNewBoard, setActiveBox, setActiveNumber } from '../redux/actions/board'
@@ -50,14 +50,7 @@ export const PlaySingle: FC = () => {
 					<SingleplayerControls />
 				</>
 			) : null}
-			{gameOver ? (
-				<Grid rows="auto auto auto">
-					<div className="game-over">You win over!</div>
-					<Button as={Link} to="/" primary>
-						Play Again
-					</Button>
-				</Grid>
-			) : null}
+			{gameOver ? <GameOver singleMode /> : null}
 		</>
 	)
 }

@@ -37,6 +37,10 @@ const initialState: BoardState = {
 export const boardReducer = createReducer(initialState, (builder) => {
 	builder
 
+		.addCase(fetchNewBoard.pending, (state) => {
+			state.board = undefined
+			state.solution = undefined
+		})
 		.addCase(fetchNewBoard.fulfilled, (state, action) => {
 			state.board = action.payload[0]
 			state.solution = action.payload[1]

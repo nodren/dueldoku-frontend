@@ -1,12 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link, useParams } from 'react-router-dom'
-import { Button, Loader } from 'semantic-ui-react'
+import { useParams } from 'react-router-dom'
+import { Loader } from 'semantic-ui-react'
 
 import { Board } from '../components/Board'
-import { Grid } from '../components/Grid'
+import { GameOver } from '../components/GameOver'
 import { MultiplayerControls } from '../components/MultiplayerControls'
-import { Scores } from '../components/Scores'
 import { useActions } from '../hooks/redux'
 import {
 	fetchNewBoard,
@@ -72,15 +71,7 @@ export const Play: FC = () => {
 					<MultiplayerControls />
 				</>
 			) : null}
-			{gameOver ? (
-				<Grid rows="auto auto auto">
-					<div className="game-over">Game over!</div>
-					<Scores />
-					<Button as={Link} to="/" primary>
-						Play Again
-					</Button>
-				</Grid>
-			) : null}
+			{gameOver ? <GameOver /> : null}
 		</>
 	)
 }
