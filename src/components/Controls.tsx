@@ -140,7 +140,7 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 
 	return (
 		<Grid rows="auto auto auto">
-			<Grid columns="1fr auto 1fr" padding="1rem">
+			<Grid columns="1fr auto 1fr" padding="10px">
 				<div />
 				<Button.Group>
 					<Button onClick={onEraseClick}>

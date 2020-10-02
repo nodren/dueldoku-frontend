@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import { isEqual } from 'lodash'
-import React, { FC } from 'react'
+import React, { FC, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 
 import { useActions } from '../hooks/redux'
@@ -28,17 +28,23 @@ export const Board: FC = () => {
 
 	return (
 		<>
-			<style jsx global>{`
+			<style jsx>{`
+				.board-container {
+					margin: 0 auto;
+				}
 				.board {
 					border: 2px solid ${dark ? '#fff' : '#000'};
 					background-color: ${dark ? '#25292e' : '#e4decc'};
+					max-width: 97.2vw;
 				}
 			`}</style>
-			<Grid columns={1} rows={9} className="board">
-				{board.map((row, idx) => (
-					<Row border={idx !== 0 && idx % 3 === 0} key={`row${idx}`} rowNum={idx} />
-				))}
-			</Grid>
+			<div className="board-container">
+				<div className="board">
+					{board.map((row, idx) => (
+						<Row border={idx !== 0 && idx % 3 === 0} key={`row${idx}`} rowNum={idx} />
+					))}
+				</div>
+			</div>
 		</>
 	)
 }
@@ -54,16 +60,36 @@ const Row: FC<RowProps> = ({ border, rowNum }) => {
 
 	return (
 		<>
-			<style global jsx>{`
+			<style jsx>{`
+				.row {
+					display: flex;
+				}
 				.row-border {
 					border-top: 2px solid ${dark ? '#aaa' : '#333'};
 				}
 			`}</style>
-			<Grid className={border ? 'row-border' : ''} columns={9} rows={1}>
+			<div className={border ? 'row row-border' : 'row'}>
 				{board[rowNum].map((square, idx) => (
-					<Box rowNum={rowNum} columnNum={idx} key={`box${rowNum}${idx}`} />
+					<Fragment key={`box${rowNum}${idx}`}>
+						<Box rowNum={rowNum} columnNum={idx} />
+					</Fragment>
 				))}
-			</Grid>
+			</div>
+		</>
+	)
+}
+
+const Border: FC = () => {
+	const dark = useSelector(getDarkMode)
+
+	return (
+		<>
+			<style jsx>{`
+				.border {
+					border: 1px solid ${dark ? '#aaa' : '#333'};
+				}
+			`}</style>
+			<div className="border"></div>
 		</>
 	)
 }
@@ -118,8 +144,16 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 				.box {
 					border: 1px solid ${dark ? '#666' : '#aaa'};
 					text-align: center;
-					line-height: 3rem;
+					line-height: 35px;
 					font-size: 30px;
+					height: 40px;
+					width: 40px;
+				}
+				@media (max-width: 600px) {
+					.box {
+						height: 10.8vw;
+						width: 10.8vw;
+					}
 				}
 				.border {
 					border-left: 2px solid ${dark ? '#aaa' : '#333'};
@@ -184,7 +218,7 @@ const BoxNotes: FC<BoxProps> = ({ rowNum, columnNum }) => {
 				.note {
 					color: ${dark ? '#eee' : '#111'};
 					font-size: 12px;
-					line-height: 1rem;
+					line-height: 12px;
 				}
 				.active-number {
 					color: ${dark ? '#fff' : '#000'};

@@ -27,11 +27,11 @@ export const Theme: FC = ({ children }) => {
 				.container {
 					display: grid;
 					margin: auto;
-					padding-top: 2rem;
-					width: 390px;
+					padding-top: 14px;
+					max-width: 400px;
 				}
 				.page {
-					margin-top: 1rem;
+					margin-top: 14px;
 					display: grid;
 				}
 			`}</style>

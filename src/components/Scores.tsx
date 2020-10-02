@@ -15,12 +15,6 @@ export const Scores: FC = () => {
 
 	return (
 		<Table celled unstackable inverted={dark}>
-			<Table.Header>
-				<Table.Row>
-					<Table.HeaderCell>Scores</Table.HeaderCell>
-					<Table.HeaderCell />
-				</Table.Row>
-			</Table.Header>
 			<Table.Body>
 				{processScores(scores).map((score) => (
 					<Table.Row key={`scoreRow_${score.id}`}>

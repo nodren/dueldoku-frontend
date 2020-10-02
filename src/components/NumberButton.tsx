@@ -22,8 +22,8 @@ export const NumberButton: FC<Props> = ({ number, onClick }) => {
 			<style jsx>{`
 				.number-button {
 					font-weight: bolder;
-					font-size: 24px;
-					line-height: 3rem;
+					font-size: 30px;
+					line-height: 54px;
 					text-align: center;
 					cursor: pointer;
 				}
