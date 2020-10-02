@@ -5,9 +5,16 @@ import { useKey, useKeyPressEvent } from 'react-use'
 import { Button, Icon } from 'semantic-ui-react'
 
 import { useActions } from '../hooks/redux'
-import { setActiveBox, setActiveNumber, setNotes, setNotesMode } from '../redux/actions/board'
+import {
+	setActiveBox,
+	setActiveNumber,
+	setAnswers,
+	setNotes,
+	setNotesMode,
+} from '../redux/actions/board'
 import {
 	getActiveBox,
+	getAnswers,
 	getBoard,
 	getNotes,
 	getNotesMode,
@@ -32,6 +39,7 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 	const notes = useSelector(getNotes)
 	const activeBox = useSelector(getActiveBox)
 	const validateAnswers = useSelector(getValidateAnswers)
+	const answers = useSelector(getAnswers)
 
 	const checkSolution = !singleMode || validateAnswers
 
@@ -40,6 +48,7 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 		setActiveNumber,
 		setNotes,
 		setNotesMode,
+		setAnswers,
 	})
 
 	const onNumberClick = (number: number) => () => {
@@ -111,6 +120,9 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 		}
 		editNotes[activeBox[1]][activeBox[0]] = {}
 		actions.setNotes(editNotes)
+		const editAnswers = cloneDeep(answers)
+		delete editAnswers[`${activeBox[0]}:${activeBox[1]}`]
+		actions.setAnswers(editAnswers)
 	}
 
 	useKeyPressEvent('1', null, onNumberClick(1))

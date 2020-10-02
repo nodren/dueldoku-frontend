@@ -3,7 +3,14 @@ import { useSelector } from 'react-redux'
 
 import { useActions } from '../hooks/redux'
 import useSocket from '../hooks/useSocket'
-import { setActiveBox, setAnswers, setBoard, setGameOver, setNotes } from '../redux/actions/board'
+import {
+	setActiveBox,
+	setAnswers,
+	setBoard,
+	setGameOver,
+	setNotes,
+	setSolution,
+} from '../redux/actions/board'
 import { setScores } from '../redux/actions/multiplayer'
 import { getActiveBox, getNotes, getSolution } from '../redux/selectors/board'
 import { getUuid } from '../redux/selectors/settings'
@@ -35,6 +42,7 @@ export const MultiplayerControls: FC = () => {
 		setGameOver,
 		setScores,
 		setNotes,
+		setSolution,
 	})
 
 	useSocket('update', ({ board, answers, scores, activeBox, number }: UpdateProps) => {
@@ -58,6 +66,10 @@ export const MultiplayerControls: FC = () => {
 	})
 	useSocket('gameover', (board: Board) => {
 		actions.setGameOver(true)
+		actions.setBoard()
+		actions.setSolution()
+		actions.setAnswers({})
+		actions.setNotes([] as any)
 	})
 
 	const onNumberClick = (number: number) => {

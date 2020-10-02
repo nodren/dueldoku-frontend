@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { useClickAway } from 'react-use'
 import { Button, Header, Loader } from 'semantic-ui-react'
 
 import { Board } from '../components/Board'
@@ -45,12 +44,6 @@ export const Join: FC = () => {
 		})()
 	}, [params.uuid])
 
-	const ref = useRef(null)
-	useClickAway(ref, () => {
-		actions.setActiveBox()
-		actions.setActiveNumber(0)
-	})
-
 	return (
 		<>
 			<style jsx>{`
@@ -75,10 +68,10 @@ export const Join: FC = () => {
 				)}
 				<Loader active={loading} />
 				{!loading && board && !gameOver ? (
-					<div ref={ref}>
+					<>
 						<Board />
 						<MultiplayerControls />
-					</div>
+					</>
 				) : null}
 				{gameOver ? (
 					<Grid rows="auto auto auto">

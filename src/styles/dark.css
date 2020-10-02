@@ -2,7 +2,7 @@
 	height: 100%;
 }
 .wrapper {
-	background-color: white;
+	background-color: #f7f1e1;
 	height: 100%;
 	min-height: 0;
 }
@@ -27,4 +27,8 @@
 .dark > .ui.toggle.checkbox input:checked ~ label,
 .dark > .ui.toggle.checkbox input:focus:checked ~ label {
 	color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.wrapper:not(.dark) .ui.button {
+	background: #d8d5ae;
 }

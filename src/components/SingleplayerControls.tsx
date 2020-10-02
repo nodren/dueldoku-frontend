@@ -3,7 +3,14 @@ import { useSelector } from 'react-redux'
 import { cloneDeep, isEqual } from 'lodash'
 
 import { useActions } from '../hooks/redux'
-import { setActiveBox, setAnswers, setBoard, setGameOver, setNotes } from '../redux/actions/board'
+import {
+	setActiveBox,
+	setAnswers,
+	setBoard,
+	setGameOver,
+	setNotes,
+	setSolution,
+} from '../redux/actions/board'
 import { getActiveBox, getAnswers, getBoard, getNotes, getSolution } from '../redux/selectors/board'
 import { Controls } from './Controls'
 import { checkAndClearNotes } from '../utils'
@@ -21,6 +28,7 @@ export const SingleplayerControls: FC = () => {
 		setBoard,
 		setGameOver,
 		setNotes,
+		setSolution,
 	})
 
 	const onNumberClick = (number: number) => {
@@ -34,6 +42,10 @@ export const SingleplayerControls: FC = () => {
 		actions.setNotes(modifiedNotes)
 		if (isEqual(modifiedBoard, solution)) {
 			actions.setGameOver(true)
+			actions.setBoard()
+			actions.setSolution()
+			actions.setAnswers({})
+			actions.setNotes([] as any)
 		}
 	}
 

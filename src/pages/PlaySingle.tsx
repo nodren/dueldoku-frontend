@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Button, Loader } from 'semantic-ui-react'
-import { useClickAway } from 'react-use'
 
 import { Board } from '../components/Board'
 import { Grid } from '../components/Grid'
@@ -34,12 +33,6 @@ export const PlaySingle: FC = () => {
 		}
 	}, [solution])
 
-	const ref = useRef(null)
-	useClickAway(ref, () => {
-		actions.setActiveBox()
-		actions.setActiveNumber(0)
-	})
-
 	return (
 		<>
 			<style jsx>{`
@@ -52,10 +45,10 @@ export const PlaySingle: FC = () => {
 			`}</style>
 			<Loader active={loading} />
 			{!loading && board && !gameOver ? (
-				<div ref={ref}>
+				<>
 					<Board />
 					<SingleplayerControls />
-				</div>
+				</>
 			) : null}
 			{gameOver ? (
 				<Grid rows="auto auto auto">
