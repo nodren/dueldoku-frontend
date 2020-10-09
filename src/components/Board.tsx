@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import { isEqual } from 'lodash'
-import React, { FC, Fragment } from 'react'
+import React, { FC, Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { useActions } from '../hooks/redux'
@@ -10,6 +10,7 @@ import {
 	getActiveNumber,
 	getAnswers,
 	getBoard,
+	getGameOverAnimation,
 	getNotes,
 	getSolution,
 } from '../redux/selectors/board'
@@ -19,12 +20,18 @@ import {
 	getHighlightRows,
 	getValidateAnswers,
 } from '../redux/selectors/settings'
-import { getBoxCoords, isError } from '../utils'
+import { getBoxCoords, isError, wait } from '../utils'
+import { BoardHeader } from './BoardHeader'
 import { Grid } from './Grid'
 
-export const Board: FC = () => {
+interface Props {
+	singleMode?: boolean
+}
+
+export const Board: FC<Props> = ({ singleMode }) => {
 	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
+	const [animateBack, setAnimateBack] = useState(false)
 
 	return (
 		<>
@@ -39,9 +46,16 @@ export const Board: FC = () => {
 				}
 			`}</style>
 			<div className="board-container">
+				<BoardHeader singleMode={singleMode} />
 				<div className="board">
 					{board.map((row, idx) => (
-						<Row border={idx !== 0 && idx % 3 === 0} key={`row${idx}`} rowNum={idx} />
+						<Row
+							animateBack={animateBack}
+							setAnimateBack={setAnimateBack}
+							border={idx !== 0 && idx % 3 === 0}
+							key={`row${idx}`}
+							rowNum={idx}
+						/>
 					))}
 				</div>
 			</div>
@@ -50,11 +64,13 @@ export const Board: FC = () => {
 }
 
 interface RowProps {
+	animateBack: boolean
+	setAnimateBack: (val: boolean) => void
 	border: boolean
 	rowNum: number
 }
 
-const Row: FC<RowProps> = ({ border, rowNum }) => {
+const Row: FC<RowProps> = ({ animateBack, setAnimateBack, border, rowNum }) => {
 	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 
@@ -71,7 +87,12 @@ const Row: FC<RowProps> = ({ border, rowNum }) => {
 			<div className={border ? 'row row-border' : 'row'}>
 				{board[rowNum].map((square, idx) => (
 					<Fragment key={`box${rowNum}${idx}`}>
-						<Box rowNum={rowNum} columnNum={idx} />
+						<Box
+							animateBack={animateBack}
+							setAnimateBack={setAnimateBack}
+							rowNum={rowNum}
+							columnNum={idx}
+						/>
 					</Fragment>
 				))}
 			</div>
@@ -95,11 +116,13 @@ const Border: FC = () => {
 }
 
 interface BoxProps {
+	animateBack: boolean
+	setAnimateBack: (val: boolean) => void
 	rowNum: number
 	columnNum: number
 }
 
-const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
+const Box: FC<BoxProps> = ({ animateBack, setAnimateBack, rowNum, columnNum }) => {
 	const dark = useSelector(getDarkMode)
 	const board = useSelector(getBoard)
 	const activeBox = useSelector(getActiveBox)
@@ -109,11 +132,39 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 	const hilightRows = useSelector(getHighlightRows)
 	const hilightNumbers = useSelector(getHighlightNumbers)
 	const validateAnswers = useSelector(getValidateAnswers)
+	const gameOverAnimation = useSelector(getGameOverAnimation)
+	const [animate, setAnimate] = useState(false)
 
 	const actions = useActions({
 		setActiveBox,
 		setActiveNumber,
 	})
+
+	useEffect(() => {
+		;(async () => {
+			if (gameOverAnimation) {
+				//wait some time between 0 and 2 seconds based on position (0-8)
+				const animationNumber = columnNum > rowNum ? columnNum : rowNum
+				await wait((animationNumber * 1000) / 8)
+				setAnimate(true)
+				if (columnNum === 8 && rowNum === 8) {
+					await wait(600)
+					setAnimateBack(true)
+				}
+			}
+		})()
+	}, [gameOverAnimation])
+
+	useEffect(() => {
+		;(async () => {
+			if (animateBack) {
+				//wait some time between 0 and 2 seconds based on position (0-8)
+				const animationNumber = 8 - (columnNum < rowNum ? columnNum : rowNum)
+				await wait((animationNumber * 1000) / 8)
+				setAnimate(false)
+			}
+		})()
+	}, [animateBack])
 
 	const square = board[rowNum][columnNum]
 	const activeBoxCoords = activeBox ? getBoxCoords(activeBox[1], activeBox[0]) : undefined
@@ -131,6 +182,7 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 		['active-number']: hilightNumbers && square !== 0 && square === activeNumber,
 		['your-guess']: answers[`${columnNum}:${rowNum}`] === 'you',
 		['opponent-guess']: answers[`${columnNum}:${rowNum}`] === 'opponent',
+		gameOver: animate,
 		box: true,
 	})
 	const onClick = () => {
@@ -148,6 +200,11 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 					font-size: 30px;
 					height: 40px;
 					width: 40px;
+					transition: transform 1.5s;
+					transform-style: preserve-3d;
+				}
+				.gameOver {
+					transform: rotateY(180deg);
 				}
 				@media (max-width: 600px) {
 					.box {
@@ -199,7 +256,12 @@ const Box: FC<BoxProps> = ({ rowNum, columnNum }) => {
 	)
 }
 
-const BoxNotes: FC<BoxProps> = ({ rowNum, columnNum }) => {
+interface BoxNotesProps {
+	rowNum: number
+	columnNum: number
+}
+
+const BoxNotes: FC<BoxNotesProps> = ({ rowNum, columnNum }) => {
 	const dark = useSelector(getDarkMode)
 	const notes = useSelector(getNotes)
 	const activeNumber = useSelector(getActiveNumber)
@@ -216,12 +278,13 @@ const BoxNotes: FC<BoxProps> = ({ rowNum, columnNum }) => {
 		<>
 			<style jsx>{`
 				.note {
-					color: ${dark ? '#eee' : '#111'};
+					color: ${dark ? '#ccc' : '#333'};
 					font-size: 12px;
 					line-height: 12px;
 				}
 				.active-number {
 					color: ${dark ? '#fff' : '#000'};
+					font-size: 14px;
 					font-weight: 900;
 				}
 			`}</style>

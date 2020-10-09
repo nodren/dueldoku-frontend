@@ -11,6 +11,8 @@ import {
 	setGameOver,
 	setNotes,
 	setNotesMode,
+	setDifficulty,
+	setGameOverAnimation,
 } from '../actions/board'
 
 export interface BoardState {
@@ -18,7 +20,9 @@ export interface BoardState {
 	activeNumber: number
 	answers: Answers
 	board?: Board
+	difficulty?: string
 	gameOver: boolean
+	gameOverAnimation: boolean
 	notes: Notes
 	notesMode: boolean
 	solution?: Board
@@ -29,6 +33,7 @@ const initialState: BoardState = {
 	answers: {},
 	board: undefined,
 	gameOver: false,
+	gameOverAnimation: false,
 	notes: [] as any,
 	notesMode: false,
 	solution: undefined,
@@ -65,6 +70,9 @@ export const boardReducer = createReducer(initialState, (builder) => {
 		.addCase(setGameOver, (state, action) => {
 			state.gameOver = action.payload
 		})
+		.addCase(setGameOverAnimation, (state, action) => {
+			state.gameOverAnimation = action.payload
+		})
 
 		.addCase(setNotes, (state, action) => {
 			state.notes = action.payload
@@ -76,5 +84,9 @@ export const boardReducer = createReducer(initialState, (builder) => {
 
 		.addCase(setSolution, (state, action) => {
 			state.solution = action.payload
+		})
+
+		.addCase(setDifficulty, (state, action) => {
+			state.difficulty = action.payload
 		})
 })

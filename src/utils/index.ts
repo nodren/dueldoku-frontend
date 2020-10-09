@@ -142,3 +142,9 @@ export function createEmptyBoard(): Board {
 		[0, 0, 0, 0, 0, 0, 0, 0, 0],
 	]
 }
+
+export function wait(time: number) {
+	return new Promise((res) => {
+		setTimeout(res, time)
+	})
+}

@@ -38,7 +38,7 @@ export const WaitingRoom: FC = () => {
 	}, [uuid])
 
 	const onCopy = () => {
-		copy(`${document.location.protocol}//${document.location.host}/join/${uuid}`)
+		copy(`${document.location.protocol}//${document.location.host}/join/${params.mode}/${uuid}`)
 		setShowPopup(true)
 		setTimeout(() => {
 			setShowPopup(false)
@@ -65,7 +65,7 @@ export const WaitingRoom: FC = () => {
 					trigger={
 						<Button
 							onClick={onCopy}
-						>{`${document.location.protocol}//${document.location.host}/join/${uuid}`}</Button>
+						>{`${document.location.protocol}//${document.location.host}/join/${params.mode}/${uuid}`}</Button>
 					}
 					content="Copied!"
 					on="click"

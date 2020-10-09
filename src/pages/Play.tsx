@@ -12,8 +12,10 @@ import {
 	setActiveBox,
 	setActiveNumber,
 	setBoard,
+	setDifficulty,
 	setSolution,
 } from '../redux/actions/board'
+import { setScores } from '../redux/actions/scores'
 import { setUuid } from '../redux/actions/settings'
 import { getBoard, getGameOver, getSolution } from '../redux/selectors/board'
 import { getSocket } from '../socket'
@@ -31,12 +33,16 @@ export const Play: FC = () => {
 		fetchNewBoard,
 		setActiveBox,
 		setActiveNumber,
+		setDifficulty,
+		setScores,
 	})
 	const [loading, setLoading] = useState(true)
 
 	const params = useParams<{ uuid: string; mode: string }>()
 
 	useEffect(() => {
+		actions.setScores({})
+		actions.setDifficulty(params.mode)
 		actions.fetchNewBoard(params.mode)
 		actions.setUuid(params.uuid)
 		socket.emit('start', params.uuid)

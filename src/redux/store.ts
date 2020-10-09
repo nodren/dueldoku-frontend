@@ -1,18 +1,18 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 import { boardReducer, BoardState } from './reducers/board'
-import { multiplayerReducer, MultiplayerState } from './reducers/multiplayer'
+import { scoresReducer, ScoresState } from './reducers/scores'
 import { settingsReducer, SettingsState } from './reducers/settings'
 
 export interface RootState {
 	board: BoardState
-	multiplayer: MultiplayerState
+	scores: ScoresState
 	settings: SettingsState
 }
 
 const reducer = combineReducers({
 	board: boardReducer,
-	multiplayer: multiplayerReducer,
+	scores: scoresReducer,
 	settings: settingsReducer,
 })
 

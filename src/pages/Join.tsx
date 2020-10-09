@@ -8,7 +8,13 @@ import { GameOver } from '../components/GameOver'
 import { MultiplayerControls } from '../components/MultiplayerControls'
 import { useActions } from '../hooks/redux'
 import useSocket from '../hooks/useSocket'
-import { setActiveBox, setActiveNumber, setBoard, setSolution } from '../redux/actions/board'
+import {
+	setActiveBox,
+	setActiveNumber,
+	setBoard,
+	setDifficulty,
+	setSolution,
+} from '../redux/actions/board'
 import { setUuid } from '../redux/actions/settings'
 import { getBoard, getGameOver } from '../redux/selectors/board'
 import { getDarkMode } from '../redux/selectors/settings'
@@ -23,16 +29,21 @@ export const Join: FC = () => {
 		setUuid,
 		setActiveBox,
 		setActiveNumber,
+		setDifficulty,
 	})
 	const [loading, setLoading] = useState(true)
 
-	const params = useParams<{ uuid: string }>()
+	const params = useParams<{ mode: string; uuid: string }>()
 
 	const socket = useSocket('ready', (data) => {
 		actions.setBoard(data.board)
 		actions.setSolution(data.solution)
 		setLoading(false)
 	})
+
+	useEffect(() => {
+		actions.setDifficulty(params.mode)
+	}, [])
 
 	useEffect(() => {
 		;(async () => {
@@ -56,14 +67,14 @@ export const Join: FC = () => {
 					font-size: 36px;
 				}
 			`}</style>
-			<div className="start">
+			<>
 				{loading && (
-					<>
+					<div className="start">
 						<Header as="h2" inverted={dark}>
 							Waiting room
 						</Header>
 						<p>Waiting for opponent</p>
-					</>
+					</div>
 				)}
 				<Loader active={loading} />
 				{!loading && board && !gameOver ? (
@@ -73,7 +84,7 @@ export const Join: FC = () => {
 					</>
 				) : null}
 				{gameOver ? <GameOver /> : null}
-			</div>
+			</>
 		</>
 	)
 }

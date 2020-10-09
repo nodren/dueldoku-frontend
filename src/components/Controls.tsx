@@ -23,7 +23,6 @@ import {
 import { getValidateAnswers } from '../redux/selectors/settings'
 import { Grid } from './Grid'
 import { NumberButton } from './NumberButton'
-import { Scores } from './Scores'
 
 interface Props {
 	onNumber: (number: number) => void
@@ -173,7 +172,6 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 				<NumberButton number={8} onClick={onNumberClick(8)} />
 				<NumberButton number={9} onClick={onNumberClick(9)} />
 			</Grid>
-			{!singleMode && <Scores />}
 		</Grid>
 	)
 }

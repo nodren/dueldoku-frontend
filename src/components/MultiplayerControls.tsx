@@ -7,16 +7,18 @@ import {
 	setActiveBox,
 	setAnswers,
 	setBoard,
+	setDifficulty,
 	setGameOver,
 	setNotes,
 	setSolution,
+	setGameOverAnimation,
 } from '../redux/actions/board'
-import { setScores } from '../redux/actions/multiplayer'
+import { setScores } from '../redux/actions/scores'
 import { getActiveBox, getNotes, getSolution } from '../redux/selectors/board'
 import { getUuid } from '../redux/selectors/settings'
 import { getSocket } from '../socket'
 import { Board } from '../types'
-import { checkAndClearNotes, formatAnswers } from '../utils'
+import { checkAndClearNotes, formatAnswers, wait } from '../utils'
 import { Controls } from './Controls'
 
 const socket = getSocket()
@@ -43,6 +45,8 @@ export const MultiplayerControls: FC = () => {
 		setScores,
 		setNotes,
 		setSolution,
+		setDifficulty,
+		setGameOverAnimation,
 	})
 
 	useSocket('update', ({ board, answers, scores, activeBox, number }: UpdateProps) => {
@@ -64,12 +68,15 @@ export const MultiplayerControls: FC = () => {
 			actions.setAnswers(formatAnswers(answers, socket.id))
 		}
 	})
-	useSocket('gameover', (board: Board) => {
+	useSocket('gameover', async (board: Board) => {
+		actions.setGameOverAnimation(true)
+		await wait(3400)
 		actions.setGameOver(true)
 		actions.setBoard()
 		actions.setSolution()
 		actions.setAnswers({})
 		actions.setNotes([] as any)
+		actions.setDifficulty('')
 	})
 
 	const onNumberClick = (number: number) => {

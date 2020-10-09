@@ -26,7 +26,7 @@ export const App: FC = () => {
 				<Route path="/wait/:mode" exact>
 					<WaitingRoom />
 				</Route>
-				<Route path="/join/:uuid" exact>
+				<Route path="/join/:mode/:uuid" exact>
 					<Join />
 				</Route>
 				<Route path="/play/choose" exact>

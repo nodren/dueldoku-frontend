@@ -22,8 +22,17 @@ export const getBoard = createSelector(
 	(res) => res,
 )
 
+export const getDifficulty = createSelector(
+	(state: RootState) => state.board.difficulty,
+	(res) => res,
+)
+
 export const getGameOver = createSelector(
 	(state: RootState) => state.board.gameOver,
+	(res) => res,
+)
+export const getGameOverAnimation = createSelector(
+	(state: RootState) => state.board.gameOverAnimation,
 	(res) => res,
 )
 

@@ -2,6 +2,6 @@ import { createSelector } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 export const getScores = createSelector(
-	(state: RootState) => state.multiplayer.scores,
+	(state: RootState) => state.scores.scores,
 	(res) => res,
 )

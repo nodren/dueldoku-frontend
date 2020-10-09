@@ -7,13 +7,19 @@ import {
 	setActiveBox,
 	setAnswers,
 	setBoard,
+	setDifficulty,
 	setGameOver,
 	setNotes,
 	setSolution,
+	setGameOverAnimation,
 } from '../redux/actions/board'
 import { getActiveBox, getAnswers, getBoard, getNotes, getSolution } from '../redux/selectors/board'
 import { Controls } from './Controls'
-import { checkAndClearNotes } from '../utils'
+import { checkAndClearNotes, wait } from '../utils'
+import { getScores } from '../redux/selectors/scores'
+import { setScores } from '../redux/actions/scores'
+import { calculateScore } from '../utils/score'
+import { getValidateAnswers } from '../redux/selectors/settings'
 
 export const SingleplayerControls: FC = () => {
 	const activeBox = useSelector(getActiveBox)
@@ -21,6 +27,8 @@ export const SingleplayerControls: FC = () => {
 	const solution = useSelector(getSolution)
 	const answers = useSelector(getAnswers)
 	const notes = useSelector(getNotes)
+	const scores = useSelector(getScores)
+	const validateAnswers = useSelector(getValidateAnswers)
 
 	const actions = useActions({
 		setActiveBox,
@@ -29,9 +37,12 @@ export const SingleplayerControls: FC = () => {
 		setGameOver,
 		setNotes,
 		setSolution,
+		setDifficulty,
+		setScores,
+		setGameOverAnimation,
 	})
 
-	const onNumberClick = (number: number) => {
+	const onNumberClick = async (number: number) => {
 		const modifiedBoard = cloneDeep(board)
 		const modifiedAnswers = cloneDeep(answers)
 		modifiedBoard[activeBox[1]][activeBox[0]] = number
@@ -40,12 +51,22 @@ export const SingleplayerControls: FC = () => {
 		actions.setAnswers(modifiedAnswers)
 		const modifiedNotes = checkAndClearNotes(notes, activeBox[1], activeBox[0], number)
 		actions.setNotes(modifiedNotes)
+		const modifiedScores = cloneDeep(scores)
+		modifiedScores['you'] =
+			(scores?.you || 0) +
+			calculateScore(modifiedBoard, solution, activeBox, number, validateAnswers)
+		actions.setScores(modifiedScores)
 		if (isEqual(modifiedBoard, solution)) {
+			actions.setGameOverAnimation(true)
+			//wait 5 seconds, then game over
+			await wait(3400)
+			actions.setGameOverAnimation(false)
 			actions.setGameOver(true)
 			actions.setBoard()
 			actions.setSolution()
 			actions.setAnswers({})
 			actions.setNotes([] as any)
+			actions.setDifficulty('')
 		}
 	}
 
@@ -59,9 +80,26 @@ export const SingleplayerControls: FC = () => {
 		const modifiedBoard = cloneDeep(board)
 		modifiedBoard[activeBox[1]][activeBox[0]] = solutionSquare
 		actions.setBoard(modifiedBoard)
+		const modifiedNotes = checkAndClearNotes(notes, activeBox[1], activeBox[0], solutionSquare)
+		actions.setNotes(modifiedNotes)
+		const modifiedScores = cloneDeep(scores)
+		modifiedScores['you'] = (scores?.you || 0) - 50
+		actions.setScores(modifiedScores)
+		if (isEqual(modifiedBoard, solution)) {
+			actions.setGameOver(true)
+			actions.setBoard()
+			actions.setSolution()
+			actions.setAnswers({})
+			actions.setNotes([] as any)
+		}
 	}
 
 	const onEraseClick = () => {
+		const number = board[activeBox[1]][activeBox[0]]
+		const modifiedScores = cloneDeep(scores)
+		modifiedScores['you'] =
+			(scores?.you || 0) - calculateScore(board, solution, activeBox, number, validateAnswers)
+		actions.setScores(modifiedScores)
 		const modifiedBoard = cloneDeep(board)
 		modifiedBoard[activeBox[1]][activeBox[0]] = 0
 		actions.setBoard(modifiedBoard)

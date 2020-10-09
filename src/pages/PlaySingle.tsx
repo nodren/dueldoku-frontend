@@ -4,10 +4,11 @@ import { useParams } from 'react-router-dom'
 import { Loader } from 'semantic-ui-react'
 
 import { Board } from '../components/Board'
-import { GameOver } from '../components/GameOver'
+import { GameOver, SingleGameOver } from '../components/GameOver'
 import { SingleplayerControls } from '../components/SingleplayerControls'
 import { useActions } from '../hooks/redux'
-import { fetchNewBoard, setActiveBox, setActiveNumber } from '../redux/actions/board'
+import { fetchNewBoard, setActiveBox, setActiveNumber, setDifficulty } from '../redux/actions/board'
+import { setScores } from '../redux/actions/scores'
 import { getBoard, getGameOver, getSolution } from '../redux/selectors/board'
 
 export const PlaySingle: FC = () => {
@@ -20,10 +21,14 @@ export const PlaySingle: FC = () => {
 		fetchNewBoard,
 		setActiveBox,
 		setActiveNumber,
+		setDifficulty,
+		setScores,
 	})
 
 	const params = useParams<{ mode: string }>()
 	useEffect(() => {
+		actions.setScores({})
+		actions.setDifficulty(params.mode)
 		actions.fetchNewBoard(params.mode)
 	}, [])
 
@@ -46,11 +51,11 @@ export const PlaySingle: FC = () => {
 			<Loader active={loading} />
 			{!loading && board && !gameOver ? (
 				<>
-					<Board />
+					<Board singleMode />
 					<SingleplayerControls />
 				</>
 			) : null}
-			{gameOver ? <GameOver singleMode /> : null}
+			{gameOver ? <SingleGameOver /> : null}
 		</>
 	)
 }
