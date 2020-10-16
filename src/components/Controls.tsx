@@ -91,7 +91,9 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 				number = 0
 			}
 			onNumber(number, box)
-			actions.setActiveNumber(number)
+			if (!numLock) {
+				actions.setActiveNumber(number)
+			}
 			//update here... maybe
 		}
 	}

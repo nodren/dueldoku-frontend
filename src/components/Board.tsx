@@ -202,6 +202,7 @@ const Box: FC<BoxProps> = ({ animateBack, setAnimateBack, rowNum, columnNum }) =
 			<style jsx>{`
 				.box {
 					border: 1px solid ${dark ? '#666' : '#aaa'};
+					cursor: pointer;
 					text-align: center;
 					line-height: 35px;
 					font-size: 30px;
