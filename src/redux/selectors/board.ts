@@ -12,6 +12,11 @@ export const getActiveNumber = createSelector(
 	(res) => res,
 )
 
+export const getSelectedBox = createSelector(
+	(state: RootState) => state.board.selectedBox,
+	(res) => res,
+)
+
 export const getAnswers = createSelector(
 	(state: RootState) => state.board.answers,
 	(res) => res,
@@ -45,6 +50,12 @@ export const getNotesMode = createSelector(
 	(state: RootState) => state.board.notesMode,
 	(res) => res,
 )
+
+export const getNumLock = createSelector(
+	(state: RootState) => state.board.numLock,
+	(res) => res,
+)
+
 export const getSolution = createSelector(
 	(state: RootState) => state.board.solution,
 	(res) => res,

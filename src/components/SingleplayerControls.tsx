@@ -42,19 +42,19 @@ export const SingleplayerControls: FC = () => {
 		setGameOverAnimation,
 	})
 
-	const onNumberClick = async (number: number) => {
+	const onNumberClick = async (number: number, box: [number, number]) => {
 		const modifiedBoard = cloneDeep(board)
 		const modifiedAnswers = cloneDeep(answers)
-		modifiedBoard[activeBox[1]][activeBox[0]] = number
-		modifiedAnswers[`${activeBox[0]}:${activeBox[1]}`] = 'you'
+		modifiedBoard[box[1]][box[0]] = number
+		modifiedAnswers[`${box[0]}:${box[1]}`] = 'you'
 		actions.setBoard(modifiedBoard)
 		actions.setAnswers(modifiedAnswers)
-		const modifiedNotes = checkAndClearNotes(notes, activeBox[1], activeBox[0], number)
+		const modifiedNotes = checkAndClearNotes(notes, box[1], box[0], number)
 		actions.setNotes(modifiedNotes)
 		const modifiedScores = cloneDeep(scores)
 		modifiedScores['you'] =
 			(scores?.you || 0) +
-			calculateScore(modifiedBoard, solution, activeBox, number, validateAnswers)
+			calculateScore(modifiedBoard, solution, box, number, validateAnswers)
 		actions.setScores(modifiedScores)
 		if (isEqual(modifiedBoard, solution)) {
 			actions.setGameOverAnimation(true)

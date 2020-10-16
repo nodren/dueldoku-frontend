@@ -71,6 +71,7 @@ export const MultiplayerControls: FC = () => {
 	useSocket('gameover', async (board: Board) => {
 		actions.setGameOverAnimation(true)
 		await wait(3400)
+		actions.setGameOverAnimation(false)
 		actions.setGameOver(true)
 		actions.setBoard()
 		actions.setSolution()
@@ -79,8 +80,8 @@ export const MultiplayerControls: FC = () => {
 		actions.setDifficulty('')
 	})
 
-	const onNumberClick = (number: number) => {
-		socket.emit('guess', { id: uuid, activeBox, number })
+	const onNumberClick = (number: number, box: [number, number]) => {
+		socket.emit('guess', { id: uuid, activeBox: box, number })
 	}
 
 	const onHintClick = () => {

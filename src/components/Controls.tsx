@@ -1,23 +1,28 @@
 import { cloneDeep } from 'lodash'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useKey, useKeyPressEvent } from 'react-use'
+import { useKeyPressEvent } from 'react-use'
 import { Button, Icon } from 'semantic-ui-react'
 
 import { useActions } from '../hooks/redux'
 import {
 	setActiveBox,
+	setSelectedBox,
 	setActiveNumber,
 	setAnswers,
 	setNotes,
 	setNotesMode,
+	setNumLock,
 } from '../redux/actions/board'
 import {
 	getActiveBox,
+	getActiveNumber,
 	getAnswers,
 	getBoard,
 	getNotes,
 	getNotesMode,
+	getNumLock,
+	getSelectedBox,
 	getSolution,
 } from '../redux/selectors/board'
 import { getValidateAnswers } from '../redux/selectors/settings'
@@ -25,7 +30,7 @@ import { Grid } from './Grid'
 import { NumberButton } from './NumberButton'
 
 interface Props {
-	onNumber: (number: number) => void
+	onNumber: (number: number, box: [number, number]) => void
 	onHint: () => void
 	onErase: () => void
 	singleMode?: boolean
@@ -33,12 +38,15 @@ interface Props {
 
 export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) => {
 	const notesMode = useSelector(getNotesMode)
+	const numLock = useSelector(getNumLock)
 	const solution = useSelector(getSolution)
 	const board = useSelector(getBoard)
 	const notes = useSelector(getNotes)
 	const activeBox = useSelector(getActiveBox)
 	const validateAnswers = useSelector(getValidateAnswers)
 	const answers = useSelector(getAnswers)
+	const activeNumber = useSelector(getActiveNumber)
+	const selectedBox = useSelector(getSelectedBox)
 
 	const checkSolution = !singleMode || validateAnswers
 
@@ -47,39 +55,56 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 		setActiveNumber,
 		setNotes,
 		setNotesMode,
+		setNumLock,
 		setAnswers,
+		setSelectedBox,
 	})
 
-	const onNumberClick = (number: number) => () => {
-		if (!activeBox) {
-			// no active choice
-			return
+	useEffect(() => {
+		if (numLock) {
+			if (selectedBox && activeNumber) {
+				handleEntry(activeNumber, selectedBox)
+				actions.setSelectedBox(undefined)
+			}
 		}
-		const boardSquare = board[activeBox[1]][activeBox[0]]
-		const solutionSquare = solution[activeBox[1]][activeBox[0]]
+	}, [selectedBox])
+
+	const handleEntry = (number: number, box: [number, number]) => {
+		const boardSquare = board[box[1]][box[0]]
+		const solutionSquare = solution[box[1]][box[0]]
 		if (checkSolution && boardSquare === solutionSquare) {
 			//there's an answer and it's correct
 			return
 		}
 		if (notesMode) {
 			const editNotes = cloneDeep(notes)
-			if (!editNotes[activeBox[1]]) {
-				editNotes[activeBox[1]] = [] as any
+			if (!editNotes[box[1]]) {
+				editNotes[box[1]] = [] as any
 			}
-			if (!editNotes[activeBox[1]][activeBox[0]]) {
-				editNotes[activeBox[1]][activeBox[0]] = {}
+			if (!editNotes[box[1]][box[0]]) {
+				editNotes[box[1]][box[0]] = {}
 			}
-			editNotes[activeBox[1]][activeBox[0]][number] = !editNotes[activeBox[1]][activeBox[0]][
-				number
-			]
+			editNotes[box[1]][box[0]][number] = !editNotes[box[1]][box[0]][number]
 			actions.setNotes(editNotes)
 		} else {
 			if (number === boardSquare) {
 				number = 0
 			}
-			onNumber(number)
+			onNumber(number, box)
 			actions.setActiveNumber(number)
 			//update here... maybe
+		}
+	}
+
+	const onNumberClick = (number: number) => () => {
+		if (numLock) {
+			actions.setActiveNumber(number)
+		} else {
+			if (!activeBox) {
+				// no active choice
+				return
+			}
+			handleEntry(number, activeBox)
 		}
 	}
 
@@ -124,6 +149,12 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 		actions.setAnswers(editAnswers)
 	}
 
+	const toggleNumLock = () => {
+		actions.setNumLock(!numLock)
+		actions.setActiveBox(undefined)
+		actions.setActiveNumber(0)
+	}
+
 	useKeyPressEvent('1', null, onNumberClick(1))
 	useKeyPressEvent('2', null, onNumberClick(2))
 	useKeyPressEvent('3', null, onNumberClick(3))
@@ -152,11 +183,15 @@ export const Controls: FC<Props> = ({ onNumber, onHint, onErase, singleMode }) =
 						onClick={() => actions.setNotesMode(!notesMode)}
 					>
 						<Icon name="sticky note outline" />
-						Notes {notesMode ? 'On' : 'Off'}
+						Notes
 					</Button>
 					<Button onClick={onHintClick}>
 						<Icon name="lightbulb outline" />
 						Hint
+					</Button>
+					<Button toggle active={numLock} onClick={toggleNumLock}>
+						<Icon name="lock" />
+						Num Lock
 					</Button>
 				</Button.Group>
 				<div />

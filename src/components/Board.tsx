@@ -4,7 +4,7 @@ import React, { FC, Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { useActions } from '../hooks/redux'
-import { setActiveBox, setActiveNumber } from '../redux/actions/board'
+import { setActiveBox, setActiveNumber, setSelectedBox } from '../redux/actions/board'
 import {
 	getActiveBox,
 	getActiveNumber,
@@ -12,6 +12,7 @@ import {
 	getBoard,
 	getGameOverAnimation,
 	getNotes,
+	getNumLock,
 	getSolution,
 } from '../redux/selectors/board'
 import {
@@ -133,11 +134,13 @@ const Box: FC<BoxProps> = ({ animateBack, setAnimateBack, rowNum, columnNum }) =
 	const hilightNumbers = useSelector(getHighlightNumbers)
 	const validateAnswers = useSelector(getValidateAnswers)
 	const gameOverAnimation = useSelector(getGameOverAnimation)
+	const numLock = useSelector(getNumLock)
 	const [animate, setAnimate] = useState(false)
 
 	const actions = useActions({
 		setActiveBox,
 		setActiveNumber,
+		setSelectedBox,
 	})
 
 	useEffect(() => {
@@ -186,8 +189,12 @@ const Box: FC<BoxProps> = ({ animateBack, setAnimateBack, rowNum, columnNum }) =
 		box: true,
 	})
 	const onClick = () => {
-		actions.setActiveBox([columnNum, rowNum])
-		actions.setActiveNumber(square)
+		if (numLock) {
+			actions.setSelectedBox([columnNum, rowNum])
+		} else {
+			actions.setActiveBox([columnNum, rowNum])
+			actions.setActiveNumber(square)
+		}
 	}
 
 	return (

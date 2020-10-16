@@ -18,7 +18,7 @@ export const BoardHeader: FC<Props> = ({ singleMode }) => {
 		<>
 			<style jsx>{`
 				.header {
-					background-color: #25292e;
+					background-color: ${dark ? '#25292e' : '#e4decc'};
 					border-left: 1px solid ${dark ? '#FFF' : '#000'};
 					border-top: 1px solid ${dark ? '#FFF' : '#000'};
 					border-right: 1px solid ${dark ? '#FFF' : '#000'};

@@ -33,3 +33,7 @@
 .wrapper:not(.dark) .ui.button {
 	background: #d8d5ae;
 }
+
+.ui.buttons .button {
+	padding: 0.78571429em 1.25em 0.78571429em;
+}

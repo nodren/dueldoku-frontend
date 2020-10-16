@@ -13,10 +13,13 @@ import {
 	setNotesMode,
 	setDifficulty,
 	setGameOverAnimation,
+	setNumLock,
+	setSelectedBox,
 } from '../actions/board'
 
 export interface BoardState {
 	activeBox?: [number, number]
+	selectedBox?: [number, number]
 	activeNumber: number
 	answers: Answers
 	board?: Board
@@ -25,6 +28,7 @@ export interface BoardState {
 	gameOverAnimation: boolean
 	notes: Notes
 	notesMode: boolean
+	numLock: boolean
 	solution?: Board
 }
 
@@ -36,6 +40,7 @@ const initialState: BoardState = {
 	gameOverAnimation: false,
 	notes: [] as any,
 	notesMode: false,
+	numLock: false,
 	solution: undefined,
 }
 
@@ -53,6 +58,10 @@ export const boardReducer = createReducer(initialState, (builder) => {
 
 		.addCase(setActiveBox, (state, action) => {
 			state.activeBox = action.payload
+		})
+
+		.addCase(setSelectedBox, (state, action) => {
+			state.selectedBox = action.payload
 		})
 
 		.addCase(setActiveNumber, (state, action) => {
@@ -80,6 +89,10 @@ export const boardReducer = createReducer(initialState, (builder) => {
 
 		.addCase(setNotesMode, (state, action) => {
 			state.notesMode = action.payload
+		})
+
+		.addCase(setNumLock, (state, action) => {
+			state.numLock = action.payload
 		})
 
 		.addCase(setSolution, (state, action) => {
